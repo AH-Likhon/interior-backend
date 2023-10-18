@@ -86,7 +86,18 @@ const getAllServicesFromDB = async (
   };
 };
 
+const getSingleServiceFromDB = async (id: string) => {
+  const result = await prisma.service.findUnique({
+    where: {
+      id,
+    },
+    include: { reviewsRatings: true },
+  });
+  return result;
+};
+
 export const InteriorService = {
   createService,
   getAllServicesFromDB,
+  getSingleServiceFromDB,
 };

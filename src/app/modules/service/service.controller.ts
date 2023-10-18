@@ -31,7 +31,20 @@ const getAllServices = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getSingleService = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await InteriorService.getSingleServiceFromDB(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Fetched single services successfully",
+
+    data: result,
+  });
+});
+
 export const ServiceController = {
   createService,
   getAllServices,
+  getSingleService,
 };
