@@ -122,7 +122,21 @@ const getAllBookingFromDB = async (
   }
 };
 
+const getSingleBookingFromDB = async (id: string) => {
+  const result = await prisma.booking.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+      service: true,
+    },
+  });
+  return result;
+};
+
 export const BookingService = {
   createBookingToDB,
   getAllBookingFromDB,
+  getSingleBookingFromDB,
 };

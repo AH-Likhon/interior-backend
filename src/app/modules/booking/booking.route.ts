@@ -12,6 +12,12 @@ router.post(
 );
 
 router.get(
+  "/:id",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  BookingController.getSingleBooking,
+);
+
+router.get(
   "/",
   auth(
     ENUM_USER_ROLE.CUSTOMER,

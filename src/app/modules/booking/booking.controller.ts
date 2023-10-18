@@ -31,16 +31,30 @@ const getAllBooking = catchAsync(async (req: Request, res: Response) => {
     filters,
     options,
   );
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Fetched user successfully",
+    message: "Fetched booking successfully",
     meta: result?.meta,
     data: result?.data,
+  });
+});
+
+const getSingleBooking = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await BookingService.getSingleBookingFromDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Fetched single booking successfully",
+    data: result,
   });
 });
 
 export const BookingController = {
   createBooking,
   getAllBooking,
+  getSingleBooking,
 };
