@@ -9,7 +9,7 @@ import { paginationFields } from "../../../constants";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
-  const result = await UserService.createUser(payload);
+  const result = await UserService.createUserToDB(payload);
   sendResponse(res, {
     success: true,
     message: "User Created successfully",
@@ -43,8 +43,22 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateSingleUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const payload = req.body;
+  const result = await UserService.updateSingleUserToDB(id, payload);
+  sendResponse(res, {
+    success: true,
+    message: "Updated single user successfully",
+    statusCode: httpStatus.OK,
+
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   getAllUser,
   getSingleUser,
+  updateSingleUser,
 };

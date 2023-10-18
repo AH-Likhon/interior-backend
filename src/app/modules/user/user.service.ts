@@ -8,7 +8,7 @@ import { IPaginationOptions } from "../../../interfaces/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelper";
 import { userSearchableFields } from "./user.constant";
 
-const createUser = async (data: User) => {
+const createUserToDB = async (data: User) => {
   if (data.role && (data.role === "ADMIN" || data.role === "SUPER_ADMIN")) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Please remove the user role");
   }
@@ -102,8 +102,30 @@ const getSingleUserFromDB = async (id: string) => {
   return result;
 };
 
+const updateSingleUserToDB = async (id: string, payload: Partial<User>) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { email, ...others } = payload;
+
+  if (others.password) {
+    const hashPassword = await bcrypt.hash(
+      others.password,
+      Number(config.bcrypt_salt_rounds),
+    );
+    others["password"] = hashPassword;
+  }
+
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: others,
+  });
+  return result;
+};
+
 export const UserService = {
-  createUser,
+  createUserToDB,
   getAllUserFromDB,
   getSingleUserFromDB,
+  updateSingleUserToDB,
 };
