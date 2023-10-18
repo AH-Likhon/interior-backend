@@ -96,8 +96,23 @@ const getSingleServiceFromDB = async (id: string) => {
   return result;
 };
 
+const updateSingleServiceFromDB = async (
+  id: string,
+  payload: Partial<Service>,
+) => {
+  const result = await prisma.service.update({
+    where: {
+      id,
+    },
+    include: { reviewsRatings: true },
+    data: payload,
+  });
+  return result;
+};
+
 export const InteriorService = {
   createService,
   getAllServicesFromDB,
   getSingleServiceFromDB,
+  updateSingleServiceFromDB,
 };

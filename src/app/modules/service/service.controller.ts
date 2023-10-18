@@ -43,8 +43,22 @@ const getSingleService = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateSingleService = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const payload = req.body;
+  const result = await InteriorService.updateSingleServiceFromDB(id, payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Single service updated successfully",
+
+    data: result,
+  });
+});
+
 export const ServiceController = {
   createService,
   getAllServices,
   getSingleService,
+  updateSingleService,
 };
