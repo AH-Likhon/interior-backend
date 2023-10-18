@@ -11,4 +11,14 @@ router.post(
   BookingController.createBooking,
 );
 
+router.get(
+  "/",
+  auth(
+    ENUM_USER_ROLE.CUSTOMER,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.SUPER_ADMIN,
+  ),
+  BookingController.getAllBooking,
+);
+
 export const BookingRoutes = router;
