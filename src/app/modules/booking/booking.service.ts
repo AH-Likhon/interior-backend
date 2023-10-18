@@ -178,9 +178,18 @@ const updateBookingStatusToDB = async (
   // }
 };
 
+const deleteBookingFromDB = async (id: string) => {
+  const result = await prisma.booking.delete({
+    where: { id },
+  });
+  return;
+  result;
+};
+
 export const BookingService = {
   createBookingToDB,
   getAllBookingFromDB,
   getSingleBookingFromDB,
   updateBookingStatusToDB,
+  deleteBookingFromDB,
 };

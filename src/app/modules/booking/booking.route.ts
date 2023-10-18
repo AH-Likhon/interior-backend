@@ -23,6 +23,12 @@ router.patch(
   BookingController.updateBookingStatus,
 );
 
+router.delete(
+  "/:id",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  BookingController.deleteBooking,
+);
+
 router.get(
   "/",
   auth(
