@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Booking } from "@prisma/client";
+import { Booking, BookingStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import ApiError from "../../../errors/ApiError";
 import httpStatus from "http-status";
@@ -134,9 +134,53 @@ const getSingleBookingFromDB = async (id: string) => {
   });
   return result;
 };
+const updateBookingStatusToDB = async (
+  id: string,
+  status: string,
+  date: string,
+) => {
+  const findBooking = await prisma.booking.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+      service: true,
+    },
+  });
+  // console.log(date);
+
+  if (status || date.length > 0) {
+    if (
+      findBooking?.bookingStatus === "confirm" ||
+      (findBooking?.bookingStatus === "cancel" && status === "pending")
+    ) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "only able to change the status from pending to confirm or cancel",
+      );
+    }
+
+    return await prisma.booking.update({
+      where: { id },
+      data: {
+        bookingStatus: status ? (status as BookingStatus) : "pending",
+        date: date ? date : findBooking?.date,
+      },
+    });
+  }
+  //  else {
+  //   throw new ApiError(
+  //     httpStatus.BAD_REQUEST,
+  //     'only able to change the status from pending to confirm or cancel',
+  //   )
+  // }
+  // }
+};
 
 export const BookingService = {
   createBookingToDB,
   getAllBookingFromDB,
   getSingleBookingFromDB,
+  updateBookingStatusToDB,
 };
