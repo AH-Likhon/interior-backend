@@ -46,11 +46,23 @@ const getSingleService = catchAsync(async (req: Request, res: Response) => {
 const updateSingleService = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const payload = req.body;
-  const result = await InteriorService.updateSingleServiceFromDB(id, payload);
+  const result = await InteriorService.updateSingleServiceToDB(id, payload);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Single service updated successfully",
+
+    data: result,
+  });
+});
+
+const deleteSingleService = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await InteriorService.deleteSingleServiceFromDB(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Single service deleted successfully",
 
     data: result,
   });
@@ -61,4 +73,5 @@ export const ServiceController = {
   getAllServices,
   getSingleService,
   updateSingleService,
+  deleteSingleService,
 };

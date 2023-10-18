@@ -96,7 +96,7 @@ const getSingleServiceFromDB = async (id: string) => {
   return result;
 };
 
-const updateSingleServiceFromDB = async (
+const updateSingleServiceToDB = async (
   id: string,
   payload: Partial<Service>,
 ) => {
@@ -110,9 +110,19 @@ const updateSingleServiceFromDB = async (
   return result;
 };
 
+const deleteSingleServiceFromDB = async (id: string) => {
+  const result = await prisma.service.delete({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+
 export const InteriorService = {
   createService,
   getAllServicesFromDB,
   getSingleServiceFromDB,
-  updateSingleServiceFromDB,
+  updateSingleServiceToDB,
+  deleteSingleServiceFromDB,
 };
