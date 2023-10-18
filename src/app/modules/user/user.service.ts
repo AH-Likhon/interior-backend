@@ -93,7 +93,17 @@ const getAllUserFromDB = async (filters: any, options: IPaginationOptions) => {
   };
 };
 
+const getSingleUserFromDB = async (id: string) => {
+  const result = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+
 export const UserService = {
   createUser,
   getAllUserFromDB,
+  getSingleUserFromDB,
 };
