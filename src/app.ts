@@ -7,7 +7,12 @@ import routes from "./app/routes";
 const app: Application = express();
 
 // Allow requests from specific origins
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://interior-ui-ah-likhon.vercel.app",
+  "https://interior-ui-chi.vercel.app",
+  "https://interior-5ixarl2sj-ah-likhon.vercel.app",
+];
 
 const corsOptions = {
   origin: (

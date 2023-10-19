@@ -19,7 +19,12 @@ const http_status_1 = __importDefault(require("http-status"));
 const routes_1 = __importDefault(require("./app/routes"));
 const app = (0, express_1.default)();
 // Allow requests from specific origins
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://interior-ui-ah-likhon.vercel.app",
+    "https://interior-ui-chi.vercel.app",
+    "https://interior-5ixarl2sj-ah-likhon.vercel.app",
+];
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
