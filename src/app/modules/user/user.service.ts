@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma";
@@ -7,6 +9,7 @@ import httpStatus from "http-status";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelper";
 import { userSearchableFields } from "./user.constant";
+import { HandleSearchRole } from "./user.utils";
 
 const createUserToDB = async (data: User) => {
   if (data.role && (data.role === "ADMIN" || data.role === "SUPER_ADMIN")) {
@@ -35,8 +38,11 @@ const createUserToDB = async (data: User) => {
   return result;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getAllUserFromDB = async (filters: any, options: IPaginationOptions) => {
+const getAllUserFromDB = async (
+  filters: any,
+  options: IPaginationOptions,
+  role: string,
+) => {
   const { limit, page, skip } = paginationHelpers.calculatePagination(options);
   const { searchTerm, ...filtersData } = filters;
 
@@ -67,30 +73,25 @@ const getAllUserFromDB = async (filters: any, options: IPaginationOptions) => {
   const whereConditions =
     andConditions.length > 0 ? { AND: andConditions } : {};
 
-  const result = await prisma.user.findMany({
-    where: whereConditions,
-    skip,
-    take: limit,
-    orderBy:
-      options.sortBy && options.sortOrder
-        ? {
-            [options.sortBy]: options.sortOrder,
-          }
-        : {
-            createdAt: "desc",
-          },
-  });
-
-  const total = await prisma.user.count();
-
-  return {
-    meta: {
-      total,
+  if (role === "ADMIN") {
+    return await HandleSearchRole(
+      "ADMIN",
+      whereConditions,
       page,
+      skip,
       limit,
-    },
-    data: result,
-  };
+      options,
+    );
+  } else if (role === "SUPER_ADMIN") {
+    return await HandleSearchRole(
+      "SUPER_ADMIN",
+      whereConditions,
+      page,
+      skip,
+      limit,
+      options,
+    );
+  }
 };
 
 const getSingleUserFromDB = async (id: string) => {
@@ -102,8 +103,11 @@ const getSingleUserFromDB = async (id: string) => {
   return result;
 };
 
-const updateSingleUserToDB = async (id: string, payload: Partial<User>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+const updateSingleUserToDB = async (
+  id: string,
+  role: string,
+  payload: Partial<User>,
+) => {
   const { email, ...others } = payload;
 
   if (others.password) {
@@ -114,6 +118,9 @@ const updateSingleUserToDB = async (id: string, payload: Partial<User>) => {
     others["password"] = hashPassword;
   }
 
+  if (role !== "SUPER_ADMIN") {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Please remove the role");
+  }
   const result = await prisma.user.update({
     where: {
       id,
@@ -132,10 +139,61 @@ const deleteUserFromDB = async (id: string) => {
   return result;
 };
 
+export const getAllAdminFromDB = async () => {
+  const result = await prisma.user.findMany({
+    where: {
+      role: "ADMIN",
+    },
+  });
+  return result;
+};
+
+const getMyProfileFromDB = async (id: string) => {
+  const result = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+
+const updateMyProfileToDB = async (id: string, data: Partial<User>) => {
+  const isUserExist = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not exist");
+  }
+  if (data?.password) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Please remove the password field",
+    );
+  }
+  if (data?.role) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Please remove the role field");
+  }
+  if (data?.email) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Please remove the email field");
+  }
+  const updateProfile = await prisma.user.update({
+    where: {
+      id,
+    },
+    data,
+  });
+  return updateProfile;
+};
+
 export const UserService = {
   createUserToDB,
   getAllUserFromDB,
   getSingleUserFromDB,
   updateSingleUserToDB,
   deleteUserFromDB,
+  getAllAdminFromDB,
+  getMyProfileFromDB,
+  updateMyProfileToDB,
 };

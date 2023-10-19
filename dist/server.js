@@ -17,22 +17,30 @@ const config_1 = __importDefault(require("./config"));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const server = app_1.default.listen(config_1.default.port, () => {
-            console.log("server is running on port " + config_1.default.port);
+            console.log(`server is running on port ${config_1.default.port}`);
+            // logger.info(`Server running on port ${config.port}`);
         });
         const exitHandler = () => {
             if (server) {
                 server.close(() => {
                     console.log("server closed");
+                    // logger.info('Server closed');
                 });
             }
             process.exit(1);
         };
-        const unexpectedErrorHandler = (error) => {
-            console.error(error);
+        const unexpectedErrorHandler = () => {
+            // errorlogger.error(error);
             exitHandler();
         };
         process.on("uncaughtException", unexpectedErrorHandler);
         process.on("unhandledRejection", unexpectedErrorHandler);
+        process.on("SIGTERM", () => {
+            // logger.info('SIGTERM received');
+            if (server) {
+                server.close();
+            }
+        });
     });
 }
 main();
