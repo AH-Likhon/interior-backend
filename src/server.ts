@@ -1,27 +1,27 @@
-import app from './app'
-import config from './config'
+import app from "./app";
+import config from "./config";
 
-async function bootstrap() {
+async function main() {
   const server = app.listen(config.port, () => {
-    console.log('server is running on port ' + config.port)
-  })
+    console.log("server is running on port " + config.port);
+  });
 
   const exitHandler = () => {
     if (server) {
       server.close(() => {
-        console.log('server closed')
-      })
+        console.log("server closed");
+      });
     }
-    process.exit(1)
-  }
+    process.exit(1);
+  };
 
   const unexpectedErrorHandler = (error: unknown) => {
-    console.error(error)
-    exitHandler()
-  }
+    console.error(error);
+    exitHandler();
+  };
 
-  process.on('uncaughtException', unexpectedErrorHandler)
-  process.on('unhandledRejection', unexpectedErrorHandler)
+  process.on("uncaughtException", unexpectedErrorHandler);
+  process.on("unhandledRejection", unexpectedErrorHandler);
 }
 
-bootstrap()
+main();

@@ -1,25 +1,41 @@
-import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
+import express, { Application, NextFunction, Request, Response } from "express";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import httpStatus from "http-status";
 import routes from "./app/routes";
 
-const app = express();
+const app: Application = express();
 
-app.use(cors());
-app.use(cookieParser());
+// Allow requests from specific origins
+const allowedOrigins = ["http://localhost:3000"];
 
-// parser
+const corsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (error: Error | null, success?: boolean) => void,
+  ) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true, // Allow credentials (cookies)
+};
+
+app.use(cors(corsOptions));
+
+//parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", routes);
 
 app.get("/", async (req: Request, res: Response) => {
-  res.send("Interior backend is working");
+  res.send("Interior server is working");
 });
 
+//global error handler
 app.use(globalErrorHandler);
 
 //handle not found
