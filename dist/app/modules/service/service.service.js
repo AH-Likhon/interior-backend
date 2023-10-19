@@ -27,7 +27,9 @@ exports.InteriorService = void 0;
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const service_constant_1 = require("./service.constant");
-const createService = (data) => __awaiter(void 0, void 0, void 0, function* () {
+const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
+const http_status_1 = __importDefault(require("http-status"));
+const createServiceToDB = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.service.create({
         data,
     });
@@ -67,7 +69,6 @@ const getAllServicesFromDB = (filters, options) => __awaiter(void 0, void 0, voi
                 else {
                     return {
                         [field]: {
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             equals: filtersData[field],
                         },
                     };
@@ -117,6 +118,14 @@ const updateSingleServiceToDB = (id, payload) => __awaiter(void 0, void 0, void 
     return result;
 });
 const deleteSingleServiceFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const bookingOrNot = yield prisma_1.default.booking.findFirst({
+        where: {
+            serviceId: id,
+        },
+    });
+    if (bookingOrNot) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "You can't delete this service, as this service already booking information");
+    }
     const result = yield prisma_1.default.service.delete({
         where: {
             id,
@@ -125,7 +134,7 @@ const deleteSingleServiceFromDB = (id) => __awaiter(void 0, void 0, void 0, func
     return result;
 });
 exports.InteriorService = {
-    createService,
+    createServiceToDB,
     getAllServicesFromDB,
     getSingleServiceFromDB,
     updateSingleServiceToDB,

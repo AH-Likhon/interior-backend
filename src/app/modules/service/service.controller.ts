@@ -9,7 +9,7 @@ import { paginationFields } from "../../../constants";
 
 const createService = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
-  const result = await InteriorService.createService(payload);
+  const result = await InteriorService.createServiceToDB(payload);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -19,9 +19,11 @@ const createService = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllServices = catchAsync(async (req: Request, res: Response) => {
+  // console.log(req.query, "checking query");
   const filters = pick(req.query, serviceFilterableFields);
   const options = pick(req.query, paginationFields);
   const result = await InteriorService.getAllServicesFromDB(filters, options);
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -34,10 +36,11 @@ const getAllServices = catchAsync(async (req: Request, res: Response) => {
 const getSingleService = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const result = await InteriorService.getSingleServiceFromDB(id);
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Fetched single services successfully",
+    message: "Fetched single service successfully",
 
     data: result,
   });
@@ -47,6 +50,7 @@ const updateSingleService = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const payload = req.body;
   const result = await InteriorService.updateSingleServiceToDB(id, payload);
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -59,6 +63,7 @@ const updateSingleService = catchAsync(async (req: Request, res: Response) => {
 const deleteSingleService = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const result = await InteriorService.deleteSingleServiceFromDB(id);
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

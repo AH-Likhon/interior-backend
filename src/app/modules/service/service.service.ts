@@ -4,8 +4,10 @@ import { paginationHelpers } from "../../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import prisma from "../../../shared/prisma";
 import { serviceSearchableFields } from "./service.constant";
+import ApiError from "../../../errors/ApiError";
+import httpStatus from "http-status";
 
-const createService = async (data: Service) => {
+const createServiceToDB = async (data: Service) => {
   const result = await prisma.service.create({
     data,
   });
@@ -49,7 +51,6 @@ const getAllServicesFromDB = async (
         } else {
           return {
             [field]: {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               equals: (filtersData as any)[field],
             },
           };
@@ -111,6 +112,17 @@ const updateSingleServiceToDB = async (
 };
 
 const deleteSingleServiceFromDB = async (id: string) => {
+  const bookingOrNot = await prisma.booking.findFirst({
+    where: {
+      serviceId: id,
+    },
+  });
+  if (bookingOrNot) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "You can't delete this service, as this service already booking information",
+    );
+  }
   const result = await prisma.service.delete({
     where: {
       id,
@@ -120,7 +132,7 @@ const deleteSingleServiceFromDB = async (id: string) => {
 };
 
 export const InteriorService = {
-  createService,
+  createServiceToDB,
   getAllServicesFromDB,
   getSingleServiceFromDB,
   updateSingleServiceToDB,
