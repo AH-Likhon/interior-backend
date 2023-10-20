@@ -31,7 +31,7 @@ const createService = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     });
 }));
 const getAllServices = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log(req.query, "checking query");
+    console.log(req.query, "checking query");
     const filters = (0, pick_1.default)(req.query, service_constant_1.serviceFilterableFields);
     const options = (0, pick_1.default)(req.query, constants_1.paginationFields);
     const result = yield service_service_1.InteriorService.getAllServicesFromDB(filters, options);
@@ -49,7 +49,7 @@ const getSingleService = (0, catchAsync_1.default)((req, res) => __awaiter(void 
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
-        message: "Fetched single service successfully",
+        message: "Fetched single services successfully",
         data: result,
     });
 }));
@@ -74,10 +74,21 @@ const deleteSingleService = (0, catchAsync_1.default)((req, res) => __awaiter(vo
         data: result,
     });
 }));
+const getByCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield service_service_1.InteriorService.getByCategoryFromDB();
+    // console.log('checking from category', result)
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: "Category data fetched successfully",
+        data: result,
+    });
+}));
 exports.ServiceController = {
     createService,
     getAllServices,
     getSingleService,
     updateSingleService,
     deleteSingleService,
+    getByCategory,
 };

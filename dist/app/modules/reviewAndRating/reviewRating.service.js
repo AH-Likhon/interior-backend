@@ -17,7 +17,19 @@ exports.ReviewRatingService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
-const insertReview = (id, serviceId, reviewData) => __awaiter(void 0, void 0, void 0, function* () {
+const findReviewFromDB = (id, serviceId) => __awaiter(void 0, void 0, void 0, function* () {
+    const reviewExistOrNot = yield prisma_1.default.reviewsRating.findFirst({
+        where: {
+            serviceId,
+            userId: id,
+        },
+    });
+    // if (reviewExistOrNot) {
+    //   throw new ApiError(httpStatus.BAD_REQUEST, 'User already reviewed')
+    // }
+    return reviewExistOrNot ? true : false;
+});
+const insertReviewToDB = (id, serviceId, reviewData) => __awaiter(void 0, void 0, void 0, function* () {
     const isBookedOrNot = yield prisma_1.default.booking.findFirst({
         where: {
             userId: id,
@@ -32,16 +44,28 @@ const insertReview = (id, serviceId, reviewData) => __awaiter(void 0, void 0, vo
             userId: id,
         },
     });
-    // console.log(reviewExistOrNot, 'checking review exist or not')
-    reviewData["userId"] = id;
-    reviewData["serviceId"] = serviceId;
-    // console.log(reviewData)
     if (reviewExistOrNot) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "User already reviewed");
     }
+    reviewData["userId"] = id;
+    reviewData["serviceId"] = serviceId;
     const result = yield prisma_1.default.reviewsRating.create({
         data: reviewData,
     });
     return result;
 });
-exports.ReviewRatingService = { insertReview };
+const getAllReviewFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.reviewsRating.findMany({
+        where: {},
+        include: {
+            service: true,
+            users: true,
+        },
+    });
+    return result;
+});
+exports.ReviewRatingService = {
+    insertReviewToDB,
+    findReviewFromDB,
+    getAllReviewFromDB,
+};

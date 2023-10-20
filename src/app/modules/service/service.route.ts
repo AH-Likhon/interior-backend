@@ -12,9 +12,9 @@ router.post(
 );
 
 router.get("/", ServiceController.getAllServices);
+router.get("/category", ServiceController.getByCategory);
 
 router.get("/:id", ServiceController.getSingleService);
-
 router.patch(
   "/:id",
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),

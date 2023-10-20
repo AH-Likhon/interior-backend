@@ -9,7 +9,12 @@ const insertReview = catchAsync(async (req: Request, res: Response) => {
   const serviceId = req.params.id;
   const { id } = req.user as any;
   const payload = req.body;
-  const result = await ReviewRatingService.insertReview(id, serviceId, payload);
+  const result = await ReviewRatingService.insertReviewToDB(
+    id,
+    serviceId,
+    payload,
+  );
+
   sendResponse(res, {
     success: true,
     message: "Review added successfully",
@@ -18,4 +23,32 @@ const insertReview = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const ReviewRatingController = { insertReview };
+const findReview = catchAsync(async (req: Request, res: Response) => {
+  const serviceId = req.params.id;
+  const { id } = req.user as any;
+  const result = await ReviewRatingService.findReviewFromDB(id, serviceId);
+
+  sendResponse(res, {
+    success: true,
+    message: "Review fetched successfully",
+    statusCode: httpStatus.OK,
+    data: result,
+  });
+});
+
+const getAllReview = catchAsync(async (req: Request, res: Response) => {
+  const result = await ReviewRatingService.getAllReviewFromDB();
+
+  sendResponse(res, {
+    success: true,
+    message: "Review fetched successfully",
+    statusCode: httpStatus.OK,
+    data: result,
+  });
+});
+
+export const ReviewRatingController = {
+  insertReview,
+  findReview,
+  getAllReview,
+};

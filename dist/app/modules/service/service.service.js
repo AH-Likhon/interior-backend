@@ -133,10 +133,31 @@ const deleteSingleServiceFromDB = (id) => __awaiter(void 0, void 0, void 0, func
     });
     return result;
 });
+const getByCategoryFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const uniqueCategories = yield prisma_1.default.service.findMany({
+        distinct: ["category"],
+        select: {
+            category: true,
+        },
+    });
+    const uniqueCategoryData = [];
+    for (const categoryInfo of uniqueCategories) {
+        const result = yield prisma_1.default.service.findFirst({
+            where: {
+                category: categoryInfo.category,
+            },
+        });
+        if (result) {
+            uniqueCategoryData.push(result);
+        }
+    }
+    return uniqueCategoryData;
+});
 exports.InteriorService = {
     createServiceToDB,
     getAllServicesFromDB,
     getSingleServiceFromDB,
     updateSingleServiceToDB,
     deleteSingleServiceFromDB,
+    getByCategoryFromDB,
 };

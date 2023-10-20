@@ -9,5 +9,7 @@ const auth_1 = __importDefault(require("../../middlewares/auth"));
 const user_1 = require("../../../enums/user");
 const reviewRating_controller_1 = require("./reviewRating.controller");
 const router = express_1.default.Router();
+router.get("/get/:id", (0, auth_1.default)(user_1.ENUM_USER_ROLE.CUSTOMER), reviewRating_controller_1.ReviewRatingController.findReview);
+router.get("/", reviewRating_controller_1.ReviewRatingController.getAllReview);
 router.patch("/:id", (0, auth_1.default)(user_1.ENUM_USER_ROLE.CUSTOMER), reviewRating_controller_1.ReviewRatingController.insertReview);
 exports.ReviewAndRatingRoutes = router;

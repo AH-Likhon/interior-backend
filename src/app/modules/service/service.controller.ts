@@ -10,6 +10,7 @@ import { paginationFields } from "../../../constants";
 const createService = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const result = await InteriorService.createServiceToDB(payload);
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -19,7 +20,7 @@ const createService = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllServices = catchAsync(async (req: Request, res: Response) => {
-  // console.log(req.query, "checking query");
+  console.log(req.query, "checking query");
   const filters = pick(req.query, serviceFilterableFields);
   const options = pick(req.query, paginationFields);
   const result = await InteriorService.getAllServicesFromDB(filters, options);
@@ -40,8 +41,7 @@ const getSingleService = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Fetched single service successfully",
-
+    message: "Fetched single services successfully",
     data: result,
   });
 });
@@ -55,7 +55,6 @@ const updateSingleService = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.OK,
     message: "Single service updated successfully",
-
     data: result,
   });
 });
@@ -68,7 +67,17 @@ const deleteSingleService = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.OK,
     message: "Single service deleted successfully",
+    data: result,
+  });
+});
 
+const getByCategory = catchAsync(async (req: Request, res: Response) => {
+  const result = await InteriorService.getByCategoryFromDB();
+  // console.log('checking from category', result)
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Category data fetched successfully",
     data: result,
   });
 });
@@ -79,4 +88,5 @@ export const ServiceController = {
   getSingleService,
   updateSingleService,
   deleteSingleService,
+  getByCategory,
 };

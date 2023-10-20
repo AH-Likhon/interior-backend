@@ -131,10 +131,36 @@ const deleteSingleServiceFromDB = async (id: string) => {
   return result;
 };
 
+const getByCategoryFromDB = async () => {
+  const uniqueCategories = await prisma.service.findMany({
+    distinct: ["category"],
+    select: {
+      category: true,
+    },
+  });
+
+  const uniqueCategoryData = [];
+
+  for (const categoryInfo of uniqueCategories) {
+    const result = await prisma.service.findFirst({
+      where: {
+        category: categoryInfo.category,
+      },
+    });
+
+    if (result) {
+      uniqueCategoryData.push(result);
+    }
+  }
+
+  return uniqueCategoryData;
+};
+
 export const InteriorService = {
   createServiceToDB,
   getAllServicesFromDB,
   getSingleServiceFromDB,
   updateSingleServiceToDB,
   deleteSingleServiceFromDB,
+  getByCategoryFromDB,
 };

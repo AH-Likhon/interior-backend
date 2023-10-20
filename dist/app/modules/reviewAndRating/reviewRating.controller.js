@@ -21,7 +21,7 @@ const insertReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
     const serviceId = req.params.id;
     const { id } = req.user;
     const payload = req.body;
-    const result = yield reviewRating_service_1.ReviewRatingService.insertReview(id, serviceId, payload);
+    const result = yield reviewRating_service_1.ReviewRatingService.insertReviewToDB(id, serviceId, payload);
     (0, sendResponse_1.default)(res, {
         success: true,
         message: "Review added successfully",
@@ -29,4 +29,28 @@ const insertReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result,
     });
 }));
-exports.ReviewRatingController = { insertReview };
+const findReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const serviceId = req.params.id;
+    const { id } = req.user;
+    const result = yield reviewRating_service_1.ReviewRatingService.findReviewFromDB(id, serviceId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        message: "Review fetched successfully",
+        statusCode: http_status_1.default.OK,
+        data: result,
+    });
+}));
+const getAllReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield reviewRating_service_1.ReviewRatingService.getAllReviewFromDB();
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        message: "Review fetched successfully",
+        statusCode: http_status_1.default.OK,
+        data: result,
+    });
+}));
+exports.ReviewRatingController = {
+    insertReview,
+    findReview,
+    getAllReview,
+};
