@@ -40,7 +40,7 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     res.cookie("refreshToken", refreshToken, cookieOptions);
     (0, sendResponse_1.default)(res, {
         success: true,
-        message: "User logged in successfully",
+        message: "User Logged in successfully",
         statusCode: http_status_1.default.OK,
         data: others,
     });
@@ -50,9 +50,36 @@ const addAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 
     const result = yield auth_service_1.AuthService.addAdmin(id);
     (0, sendResponse_1.default)(res, {
         success: true,
-        message: "Admin role added successfully",
+        message: "User role to admin added successfully",
         statusCode: http_status_1.default.OK,
         data: result,
     });
 }));
-exports.AuthController = { loginUser, addAdmin };
+const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { refreshToken } = req.cookies;
+    const result = yield auth_service_1.AuthService.refreshToken(refreshToken);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "User logged in successfully !",
+        data: result,
+    });
+}));
+const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.user;
+    console.log(req.body);
+    const { previousPassword, newPassword } = req.body;
+    const result = yield auth_service_1.AuthService.changePassword(id, previousPassword, newPassword);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Change password successfully !",
+        data: result,
+    });
+}));
+exports.AuthController = {
+    loginUser,
+    addAdmin,
+    refreshToken,
+    changePassword,
+};

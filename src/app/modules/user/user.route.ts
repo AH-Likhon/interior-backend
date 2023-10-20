@@ -7,22 +7,36 @@ import auth from "../../middlewares/auth";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  validateRequest(UserValidation.validateCreateUser),
-  UserController.createUser,
+router.get(
+  "/my-profile",
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.CUSTOMER,
+  ),
+  UserController.getMyProfile,
 );
 
 router.get(
-  "/",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-  UserController.getAllUser,
+  "/all-admin",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  UserController.getAllAdmin,
 );
 
 router.get(
   "/:id",
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   UserController.getSingleUser,
+);
+
+router.patch(
+  "/update-profile",
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.CUSTOMER,
+  ),
+  UserController.updateMyProfile,
 );
 
 router.patch(
@@ -36,6 +50,18 @@ router.delete(
   "/:id",
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   UserController.deleteUser,
+);
+
+router.post(
+  "/",
+  validateRequest(UserValidation.validateCreateUser),
+  UserController.createUser,
+);
+
+router.get(
+  "/",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  UserController.getAllUser,
 );
 
 export const UserRoutes = router;

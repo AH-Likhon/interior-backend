@@ -11,9 +11,12 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const user_validation_1 = require("./user.validation");
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const router = express_1.default.Router();
-router.post("/", (0, validateRequest_1.default)(user_validation_1.UserValidation.validateCreateUser), user_controller_1.UserController.createUser);
-router.get("/", (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN, user_1.ENUM_USER_ROLE.ADMIN), user_controller_1.UserController.getAllUser);
+router.get("/my-profile", (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN, user_1.ENUM_USER_ROLE.ADMIN, user_1.ENUM_USER_ROLE.CUSTOMER), user_controller_1.UserController.getMyProfile);
+router.get("/all-admin", (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN), user_controller_1.UserController.getAllAdmin);
 router.get("/:id", (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN, user_1.ENUM_USER_ROLE.ADMIN), user_controller_1.UserController.getSingleUser);
+router.patch("/update-profile", (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN, user_1.ENUM_USER_ROLE.ADMIN, user_1.ENUM_USER_ROLE.CUSTOMER), user_controller_1.UserController.updateMyProfile);
 router.patch("/:id", (0, validateRequest_1.default)(user_validation_1.UserValidation.updateUser), (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN, user_1.ENUM_USER_ROLE.ADMIN), user_controller_1.UserController.updateSingleUser);
 router.delete("/:id", (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN, user_1.ENUM_USER_ROLE.ADMIN), user_controller_1.UserController.deleteUser);
+router.post("/", (0, validateRequest_1.default)(user_validation_1.UserValidation.validateCreateUser), user_controller_1.UserController.createUser);
+router.get("/", (0, auth_1.default)(user_1.ENUM_USER_ROLE.SUPER_ADMIN, user_1.ENUM_USER_ROLE.ADMIN), user_controller_1.UserController.getAllUser);
 exports.UserRoutes = router;
